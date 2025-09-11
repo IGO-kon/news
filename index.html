@@ -5,42 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>My Homepage</title>
   <style>
-    body { 
-      font-family: system-ui, sans-serif; 
-      margin: 0; 
-      padding: 40px; 
-      line-height: 1.6; 
-      background: #f5f7fa; /* 背景色を追加 */
-      color: #222;
-    }
-    main { 
-      max-width: 720px; 
-      margin: 0 auto; 
-      background: #fff; 
-      border-radius: 12px; 
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07); 
-      padding: 32px;
-    }
-    h1 { 
-      margin-top: 0; 
-      color: #1976d2; 
-      text-shadow: 1px 2px 8px #e3eafc; /* 見出しに影を追加 */
-    }
-    a { 
-      text-decoration: none; 
-      color: #1976d2; /* リンク色を変更 */
-      transition: color 0.2s;
-    }
-    a:hover {
-      color: #d32f2f;
-    }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 40px; line-height: 1.6; }
+    main { max-width: 720px; margin: 0 auto; }
+    h1 { margin-top: 0; }
+    a { text-decoration: none; }
   </style>
 </head>
 <body>
   <main>
-    <h1>こんにちは！</h1>
-    <p>これは GitHub Pages に公開されたサンプルページです。</p>
-    <p>ローカルで編集 → コミット → プッシュすると、数十秒〜数分でここに反映されます。</p>
+    <h1>じゃんけんゲーム</h1>
+    <div id="janken-game" style="margin-top:2em;">
+      <div style="font-size:1.1em; margin-bottom:1em;">手を選んでください：</div>
+      <div style="display:flex; gap:16px; margin-bottom:1.5em;">
+        <button class="janken-btn" data-hand="グー">✊ グー</button>
+        <button class="janken-btn" data-hand="チョキ">✌️ チョキ</button>
+        <button class="janken-btn" data-hand="パー">🖐️ パー</button>
+      </div>
+      <div id="result" style="font-size:1.2em; min-height:2em; margin-bottom:1em;"></div>
+      <div id="history" style="font-size:0.95em; color:#555;"></div>
+    </div>
   </main>
+  <script>
+    const hands = ["グー", "チョキ", "パー"];
+    const handEmoji = {"グー":"✊", "チョキ":"✌️", "パー":"🖐️"};
+    const resultDiv = document.getElementById('result');
+    const historyDiv = document.getElementById('history');
+    let history = [];
+    function judge(player, cpu) {
+      if(player === cpu) return "あいこ";
+      if((player === "グー" && cpu === "チョキ") || (player === "チョキ" && cpu === "パー") || (player === "パー" && cpu === "グー")) return "勝ち！";
+      return "負け...";
+    }
+    document.querySelectorAll('.janken-btn').forEach(btn => {
+      btn.onclick = () => {
+        const player = btn.dataset.hand;
+        const cpu = hands[Math.floor(Math.random()*3)];
+        const result = judge(player, cpu);
+        resultDiv.innerHTML = `あなた: ${handEmoji[player]}　CPU: ${handEmoji[cpu]}<br><strong>${result}</strong>`;
+        history.unshift(`あなた: ${handEmoji[player]} / CPU: ${handEmoji[cpu]} → <b>${result}</b>`);
+        if(history.length > 5) history.pop();
+        historyDiv.innerHTML = `<div style='margin-top:1em;'>直近の結果:</div><ul style='padding-left:1.2em;'>` + history.map(h=>`<li>${h}</li>`).join('') + `</ul>`;
+      };
+    });
+  </script>
 </body>
 </html>
